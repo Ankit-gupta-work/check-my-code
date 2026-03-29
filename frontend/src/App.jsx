@@ -3,28 +3,109 @@ import { useState, useRef, useCallback } from "react";
 const API_BASE = process.env.REACT_APP_API_BASE || "http://localhost:3000";
 
 const SEV_COLORS = {
-  critical: { bg: "rgba(255,51,102,0.12)", border: "rgba(255,51,102,0.25)", text: "#ff3366", badge: "rgba(255,51,102,0.18)" },
-  high:     { bg: "rgba(255,107,53,0.10)", border: "rgba(255,107,53,0.22)", text: "#ff6b35", badge: "rgba(255,107,53,0.16)" },
-  medium:   { bg: "rgba(255,179,0,0.08)",  border: "rgba(255,179,0,0.20)",  text: "#ffb300", badge: "rgba(255,179,0,0.14)"  },
-  low:      { bg: "rgba(0,214,143,0.07)",  border: "rgba(0,214,143,0.18)", text: "#00d68f", badge: "rgba(0,214,143,0.12)" },
+  critical: {
+    bg: "rgba(255,51,102,0.12)",
+    border: "rgba(255,51,102,0.25)",
+    text: "#ff3366",
+    badge: "rgba(255,51,102,0.18)",
+  },
+  high: {
+    bg: "rgba(255,107,53,0.10)",
+    border: "rgba(255,107,53,0.22)",
+    text: "#ff6b35",
+    badge: "rgba(255,107,53,0.16)",
+  },
+  medium: {
+    bg: "rgba(255,179,0,0.08)",
+    border: "rgba(255,179,0,0.20)",
+    text: "#ffb300",
+    badge: "rgba(255,179,0,0.14)",
+  },
+  low: {
+    bg: "rgba(0,214,143,0.07)",
+    border: "rgba(0,214,143,0.18)",
+    text: "#00d68f",
+    badge: "rgba(0,214,143,0.12)",
+  },
 };
 
 function ScoreRing({ score }) {
-  const r = 52, circ = 2 * Math.PI * r;
+  const r = 52,
+    circ = 2 * Math.PI * r;
   const pct = Math.min(100, Math.max(0, score));
   const dash = (pct / 100) * circ;
-  const color = pct >= 80 ? "#00d68f" : pct >= 60 ? "#ffb300" : pct >= 40 ? "#ff6b35" : "#ff3366";
+  const color =
+    pct >= 80
+      ? "#00d68f"
+      : pct >= 60
+        ? "#ffb300"
+        : pct >= 40
+          ? "#ff6b35"
+          : "#ff3366";
   return (
-    <div style={{ position: "relative", width: 136, height: 136, flexShrink: 0 }}>
-      <svg width="136" height="136" viewBox="0 0 136 136" style={{ transform: "rotate(-90deg)" }}>
-        <circle cx="68" cy="68" r={r} fill="none" stroke="#1a1d2e" strokeWidth="9" />
-        <circle cx="68" cy="68" r={r} fill="none" stroke={color} strokeWidth="9"
-          strokeDasharray={`${dash} ${circ}`} strokeLinecap="round"
-          style={{ transition: "stroke-dasharray 1.2s cubic-bezier(.4,0,.2,1)" }} />
+    <div
+      style={{ position: "relative", width: 136, height: 136, flexShrink: 0 }}
+    >
+      <svg
+        width="136"
+        height="136"
+        viewBox="0 0 136 136"
+        style={{ transform: "rotate(-90deg)" }}
+      >
+        <circle
+          cx="68"
+          cy="68"
+          r={r}
+          fill="none"
+          stroke="#1a1d2e"
+          strokeWidth="9"
+        />
+        <circle
+          cx="68"
+          cy="68"
+          r={r}
+          fill="none"
+          stroke={color}
+          strokeWidth="9"
+          strokeDasharray={`${dash} ${circ}`}
+          strokeLinecap="round"
+          style={{
+            transition: "stroke-dasharray 1.2s cubic-bezier(.4,0,.2,1)",
+          }}
+        />
       </svg>
-      <div style={{ position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center" }}>
-        <span style={{ fontSize:30,fontWeight:800,color,lineHeight:1,fontFamily:"'Syne',sans-serif" }}>{pct}</span>
-        <span style={{ fontSize:10,color:"#3a3e55",letterSpacing:"0.12em",fontFamily:"'Fira Code',monospace",marginTop:2 }}>SCORE</span>
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <span
+          style={{
+            fontSize: 30,
+            fontWeight: 800,
+            color,
+            lineHeight: 1,
+            fontFamily: "'Syne',sans-serif",
+          }}
+        >
+          {pct}
+        </span>
+        <span
+          style={{
+            fontSize: 10,
+            color: "#3a3e55",
+            letterSpacing: "0.12em",
+            fontFamily: "'Fira Code',monospace",
+            marginTop: 2,
+          }}
+        >
+          SCORE
+        </span>
       </div>
     </div>
   );
@@ -38,7 +119,11 @@ function IssueCard({ issue, idx, open, onToggle }) {
   // Support both: title (old) and message (new API)
   const title = issue.title || issue.message;
   // Support both: description (old) and type+line (new API)
-  const description = issue.description || (issue.type ? `Type: ${issue.type}${issue.line ? ` · Line ${issue.line}` : ""}` : null);
+  const description =
+    issue.description ||
+    (issue.type
+      ? `Type: ${issue.type}${issue.line ? ` · Line ${issue.line}` : ""}`
+      : null);
   // Support both: fix (old) and suggestion (new API)
   const fix = issue.fix || issue.suggestion;
 
@@ -53,47 +138,89 @@ function IssueCard({ issue, idx, open, onToggle }) {
         cursor: "pointer",
         transition: "transform 0.15s, box-shadow 0.15s",
       }}
-      onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-1px)"; }}
-      onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.transform = "translateY(-1px)";
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.transform = "translateY(0)";
+      }}
     >
-      <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:7 }}>
-        <span style={{
-          fontSize:10, fontFamily:"'Fira Code',monospace", fontWeight:600,
-          letterSpacing:"0.1em", padding:"3px 8px", borderRadius:4,
-          background: col.badge, color: col.text
-        }}>{sev.toUpperCase()}</span>
-        <span style={{
-          fontSize:11, color:"#2a2e40", transition:"transform 0.2s",
-          display:"inline-block", transform: open ? "rotate(180deg)" : "none"
-        }}>▼</span>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          marginBottom: 7,
+        }}
+      >
+        <span
+          style={{
+            fontSize: 10,
+            fontFamily: "'Fira Code',monospace",
+            fontWeight: 600,
+            letterSpacing: "0.1em",
+            padding: "3px 8px",
+            borderRadius: 4,
+            background: col.badge,
+            color: col.text,
+          }}
+        >
+          {sev.toUpperCase()}
+        </span>
+        <span
+          style={{
+            fontSize: 11,
+            color: "#2a2e40",
+            transition: "transform 0.2s",
+            display: "inline-block",
+            transform: open ? "rotate(180deg)" : "none",
+          }}
+        >
+          ▼
+        </span>
       </div>
 
       {/* Issue title / message */}
-      <div style={{ fontSize:13.5, fontWeight:700, color:"#c8d0e8", marginBottom: open ? 6 : 0 }}>
+      <div
+        style={{
+          fontSize: 13.5,
+          fontWeight: 700,
+          color: "#c8d0e8",
+          marginBottom: open ? 6 : 0,
+        }}
+      >
         {title}
       </div>
 
       {/* Expanded panel */}
       {open && (
-        <div style={{ animation:"fadeSlide 0.2s ease" }}>
+        <div style={{ animation: "fadeSlide 0.2s ease" }}>
           {description && (
-            <div style={{
-              fontSize:12, color:"#4a5070", fontFamily:"'Fira Code',monospace",
-              lineHeight:1.6, marginBottom:8
-            }}>
+            <div
+              style={{
+                fontSize: 12,
+                color: "#4a5070",
+                fontFamily: "'Fira Code',monospace",
+                lineHeight: 1.6,
+                marginBottom: 8,
+              }}
+            >
               {description}
             </div>
           )}
           {fix && (
-            <div style={{
-              padding:"8px 10px",
-              background:"rgba(0,214,143,0.06)",
-              border:"1px solid rgba(0,214,143,0.12)",
-              borderRadius:7,
-              fontSize:12, color:"#00a86b",
-              fontFamily:"'Fira Code',monospace",
-              lineHeight:1.6
-            }}>
+            <div
+              style={{
+                padding: "8px 10px",
+                background: "rgba(0,214,143,0.06)",
+                border: "1px solid rgba(0,214,143,0.12)",
+                borderRadius: 7,
+                fontSize: 12,
+                color: "#00a86b",
+                fontFamily: "'Fira Code',monospace",
+                lineHeight: 1.6,
+              }}
+            >
               💡 {fix}
             </div>
           )}
@@ -118,12 +245,16 @@ export default function App() {
     if (!file) return;
     setFileName(file.name);
     const r = new FileReader();
-    r.onload = e => { setCode(e.target.result); setTab("write"); };
+    r.onload = (e) => {
+      setCode(e.target.result);
+      setTab("write");
+    };
     r.readAsText(file);
   };
 
-  const handleDrop = useCallback(e => {
-    e.preventDefault(); setDragOver(false);
+  const handleDrop = useCallback((e) => {
+    e.preventDefault();
+    setDragOver(false);
     loadFile(e.dataTransfer.files[0]);
   }, []);
 
@@ -133,7 +264,12 @@ export default function App() {
     setLoading(true);
     setError("");
     try {
-        const res = await fetch(`${API_BASE}/review`, {
+      const res = await fetch(`${API_BASE}/review`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ code }),
       });
 
       if (!res.ok) throw new Error(`Server returned ${res.status}`);
@@ -146,12 +282,21 @@ export default function App() {
       const normalized = {
         ...data,
         // "rating" (0–10) → "score" (0–100) for the ScoreRing
-        score: data.score !== undefined ? data.score : (data.rating !== undefined ? data.rating * 10 : 0),
-        issues: (data.issues || []).map(iss => ({
-          severity:    iss.severity,
-          title:       iss.title       || iss.message,
-          description: iss.description || (iss.type ? `${iss.type}${iss.line ? ` · Line ${iss.line}` : ""}` : undefined),
-          fix:         iss.fix         || iss.suggestion,
+        score:
+          data.score !== undefined
+            ? data.score
+            : data.rating !== undefined
+              ? data.rating * 10
+              : 0,
+        issues: (data.issues || []).map((iss) => ({
+          severity: iss.severity,
+          title: iss.title || iss.message,
+          description:
+            iss.description ||
+            (iss.type
+              ? `${iss.type}${iss.line ? ` · Line ${iss.line}` : ""}`
+              : undefined),
+          fix: iss.fix || iss.suggestion,
         })),
       };
 
@@ -446,10 +591,16 @@ export default function App() {
             <p className="ca-panel-heading">Input</p>
 
             <div className="ca-tabs">
-              <button className={`ca-tab ${tab === "write" ? "active" : ""}`} onClick={() => setTab("write")}>
+              <button
+                className={`ca-tab ${tab === "write" ? "active" : ""}`}
+                onClick={() => setTab("write")}
+              >
                 ✎ Write
               </button>
-              <button className={`ca-tab ${tab === "upload" ? "active" : ""}`} onClick={() => setTab("upload")}>
+              <button
+                className={`ca-tab ${tab === "upload" ? "active" : ""}`}
+                onClick={() => setTab("upload")}
+              >
                 ↑ Upload
               </button>
             </div>
@@ -467,15 +618,18 @@ export default function App() {
                 </div>
                 <div className="ca-editor-body">
                   <div className="ca-gutter">
-                    {Array.from({ length: Math.max(lines.length, 14) }, (_, i) => (
-                      <span key={i}>{i + 1}</span>
-                    ))}
+                    {Array.from(
+                      { length: Math.max(lines.length, 14) },
+                      (_, i) => (
+                        <span key={i}>{i + 1}</span>
+                      ),
+                    )}
                   </div>
                   <textarea
                     className="ca-code"
                     placeholder="// Paste your code here…"
                     value={code}
-                    onChange={e => setCode(e.target.value)}
+                    onChange={(e) => setCode(e.target.value)}
                     spellCheck={false}
                   />
                 </div>
@@ -484,30 +638,44 @@ export default function App() {
               <div
                 className={`ca-drop ${dragOver ? "over" : ""}`}
                 onClick={() => fileRef.current?.click()}
-                onDragOver={e => { e.preventDefault(); setDragOver(true); }}
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  setDragOver(true);
+                }}
                 onDragLeave={() => setDragOver(false)}
                 onDrop={handleDrop}
               >
                 <div className="ca-drop-icon">📁</div>
                 <div className="ca-drop-title">Drop your file here</div>
                 <div className="ca-drop-sub">or click to browse</div>
-                <div className="ca-drop-sub" style={{ fontSize: 11, color: "#1a1e30" }}>
+                <div
+                  className="ca-drop-sub"
+                  style={{ fontSize: 11, color: "#1a1e30" }}
+                >
                   .js .ts .py .go .rs .java .cpp .cs + more
                 </div>
                 <input
-                  ref={fileRef} type="file" style={{ display: "none" }}
-                  onChange={e => loadFile(e.target.files[0])}
+                  ref={fileRef}
+                  type="file"
+                  style={{ display: "none" }}
+                  onChange={(e) => loadFile(e.target.files[0])}
                   accept=".js,.ts,.jsx,.tsx,.py,.go,.rs,.java,.cpp,.c,.cs,.php,.rb,.swift,.kt,.vue,.html,.css,.json,.yaml,.yml,.sh,.sql"
                 />
               </div>
             )}
 
-            <button className="ca-review-btn" onClick={reviewCode} disabled={loading}>
+            <button
+              className="ca-review-btn"
+              onClick={reviewCode}
+              disabled={loading}
+            >
               {loading ? "⟳  Analyzing…" : "⚡  Review Code"}
             </button>
 
             {loading && (
-              <div className="ca-loader"><div className="ca-loader-bar" /></div>
+              <div className="ca-loader">
+                <div className="ca-loader-bar" />
+              </div>
             )}
             {error && <div className="ca-error">⚠ {error}</div>}
           </div>
@@ -520,7 +688,9 @@ export default function App() {
               <div className="ca-empty">
                 <div className="ca-empty-glyph">◈</div>
                 <div className="ca-empty-label">
-                  Paste code and click<br />Review Code to begin
+                  Paste code and click
+                  <br />
+                  Review Code to begin
                 </div>
               </div>
             ) : (
@@ -529,8 +699,12 @@ export default function App() {
                 <div className="ca-result-top">
                   <ScoreRing score={result.score || 0} />
                   <div className="ca-result-meta">
-                    <div className="ca-lang-tag">◆ {result.language || "Unknown"}</div>
-                    <div className="ca-quality">{result.quality || "Unknown"}</div>
+                    <div className="ca-lang-tag">
+                      ◆ {result.language || "Unknown"}
+                    </div>
+                    <div className="ca-quality">
+                      {result.quality || "Unknown"}
+                    </div>
                     <div className="ca-summary">{result.summary}</div>
                   </div>
                 </div>
@@ -539,7 +713,15 @@ export default function App() {
                 <div className="ca-stat-row">
                   <div className="ca-stat">
                     <div className="ca-stat-label">Issues Found</div>
-                    <div className="ca-stat-val" style={{ color: (result.issues?.length || 0) > 0 ? "#ff6b35" : "#00d68f" }}>
+                    <div
+                      className="ca-stat-val"
+                      style={{
+                        color:
+                          (result.issues?.length || 0) > 0
+                            ? "#ff6b35"
+                            : "#00d68f",
+                      }}
+                    >
                       {result.issues?.length || 0}
                     </div>
                   </div>
@@ -569,14 +751,20 @@ export default function App() {
                 {/* Issues */}
                 <div className="ca-sec-label">⚠ Issues</div>
                 {!result.issues || result.issues.length === 0 ? (
-                  <div className="ca-all-good">✓ No issues found — clean code!</div>
+                  <div className="ca-all-good">
+                    ✓ No issues found — clean code!
+                  </div>
                 ) : (
                   <div className="ca-issues">
                     {result.issues.map((issue, idx) => (
                       <IssueCard
-                        key={idx} issue={issue} idx={idx}
+                        key={idx}
+                        issue={issue}
+                        idx={idx}
                         open={openIssue === idx}
-                        onToggle={i => setOpenIssue(openIssue === i ? null : i)}
+                        onToggle={(i) =>
+                          setOpenIssue(openIssue === i ? null : i)
+                        }
                       />
                     ))}
                   </div>
