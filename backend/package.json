@@ -1,0 +1,25 @@
+{
+  "name": "code-reviewer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "compress-buffer": "^1.2.0",
+    "cors": "^2.8.6",
+    "dotenv": "^16.1.4",
+    "express": "^5.2.1",
+    "hiredis": "^0.1.17",
+    "iconv": "^2.0.6",
+    "openai": "^6.33.0",
+    "pg": "^1.1.0",
+    "stacktrace": "^1.1.0",
+    "uriparser": "^2.4.0"
+  }
+}
